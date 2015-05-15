@@ -1,21 +1,90 @@
 __author__ = 'ajitkumar'
 
 import requests
+from torrent.torrent import Torrent
 from bs4 import BeautifulSoup
 
 
-class Torrentz:
-    def __init__(self):
-        pass
-
-    def search(self, search_string):
-        payload = {'q':search_string}
+def search(search_string):
+    try:
+        payload = {'q': search_string}
         res = requests.get('https://torrentz.com/search', params=payload)
-        print res.content
+        soup = BeautifulSoup(res.content)
+        links = soup.find_all('dl')
+        torrentz_list = []
+        for torrent in links:
+            print torrent
+            torrentz = Torrent()
+            torrent_link = 'https://torrentz.in'
+            torrent_link += torrent.a['href']
+            torrentz.link = torrent_link
+            title_description = torrent.a.contents[-1]
+            print title_description
+            title_list = torrent.find_all('b')
+            title = []
+            for title_desc in title_list:
+                title.append(title_desc.contents[0])
+            title = (' ').join(title)
+            title += title_description
+            torrentz.name = title
+            descriptions = torrent.find_all('span')
+            torrentz.verified_by = descriptions[0].contents[0]
+            torrentz.uploaded_date = descriptions[1].contents[0]['title']
+            torrentz.size = descriptions[3].contents[0]
+            torrentz.seeds = descriptions[4].contents[0]
+            torrentz.peers = descriptions[5].contents[0]
+            torrentz_list.append(torrentz)
+        return torrentz_list
+    except Exception, excpt:
+        return torrentz_list
 
 
-t = Torrentz()
-t.search('Game of thrones')
+def search_trackers(torrent_list):
+    for torrent in torrent_list:
+        try:
+            print torrent.link
+            res = requests.get(torrent_list[0].link)
+            soup = BeautifulSoup(res.content)
+            download_link = soup.find_all('dt')
+            download_link_list, magnetic_link = list(), list()
+            for link in download_link:
+                if str(link.a['href']).startswith('http'):
+                    download_link_list.append(link.a['href'])
+                    maglink = get_magnetic_link(link.a['href'])
+                    magnetic_link.append(maglink)
+            torrent.trackers = download_link_list
+            torrent.magnetic_link = magnetic_link
+        except Exception, excpt:
+            torrent.trackers = download_link_list
+            torrent.magnetic_link = magnetic_link
+
+
+def get_magnetic_link(link):
+    res = requests.get(link)
+    soup = BeautifulSoup(res.content)
+    magnetic_links = soup.find_all('a')
+    maglink = ''
+    try:
+        for magnetic_link in magnetic_links:
+            if str(magnetic_link['href']).startswith('magnet'):
+                maglink = magnetic_link['href']
+                print maglink
+                return maglink
+    except Exception, excpt:
+        return maglink
+
+
+def convert_to_json(object_list):
+    torrent_list = list()
+    for obj in object_list:
+        torrent_list.append(obj.__dict__)
+    return torrent_list
+
+
+
+val = search('The Flash')
+search_trackers(val)
+print convert_to_json(val)
 
 
 
