@@ -81,10 +81,12 @@ def convert_to_json(object_list):
     return torrent_list
 
 
+def search_torrent(params):
+    val = search(params)
+    search_trackers(val)
+    return convert_to_json(val)
 
-val = search('fifa 14')
-search_trackers(val)
-print convert_to_json(val)
+print search_torrent('dvbjbfsbvsjbsv')
 
 
 
