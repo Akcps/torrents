@@ -1,9 +1,21 @@
 __author__ = 'ajitkumar'
 
 import requests
-from torrent.torrent import Torrent
 from bs4 import BeautifulSoup
-import pdb
+
+
+class Torrent:
+
+    def __init__(self):
+        self.name = ''
+        self.link = ''
+        self.verified_by = ''
+        self.uploaded_date = ''
+        self.size = ''
+        self.seeds = ''
+        self.peers = ''
+        self.trackers = []
+        self.magnetic_link = {}
 
 
 def search(search_string):
@@ -86,7 +98,7 @@ def search_torrent(params):
     search_trackers(val)
     return convert_to_json(val)
 
-print search_torrent('dvbjbfsbvsjbsv')
+print search_torrent('fifa 14')
 
 
 
