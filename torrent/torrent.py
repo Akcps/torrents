@@ -12,5 +12,5 @@ class Torrent:
         self.seeds = ''
         self.peers = ''
         self.trackers = []
-        self.magnetic_link = []
+        self.magnetic_link = {}
 

@@ -3,6 +3,7 @@ __author__ = 'ajitkumar'
 import requests
 from torrent.torrent import Torrent
 from bs4 import BeautifulSoup
+import pdb
 
 
 def search(search_string):
@@ -12,14 +13,12 @@ def search(search_string):
         soup = BeautifulSoup(res.content)
         links = soup.find_all('dl')
         torrentz_list = []
-        for torrent in links:
-            print torrent
+        for torrent in links[:3]:
             torrentz = Torrent()
             torrent_link = 'https://torrentz.in'
             torrent_link += torrent.a['href']
             torrentz.link = torrent_link
             title_description = torrent.a.contents[-1]
-            print title_description
             title_list = torrent.find_all('b')
             title = []
             for title_desc in title_list:
@@ -42,18 +41,20 @@ def search(search_string):
 def search_trackers(torrent_list):
     for torrent in torrent_list:
         try:
-            print torrent.link
             res = requests.get(torrent_list[0].link)
             soup = BeautifulSoup(res.content)
             download_link = soup.find_all('dt')
             download_link_list, magnetic_link = list(), list()
-            for link in download_link:
+            maglink = dict()
+            for link in download_link[:3]:
                 if str(link.a['href']).startswith('http'):
                     download_link_list.append(link.a['href'])
-                    maglink = get_magnetic_link(link.a['href'])
-                    magnetic_link.append(maglink)
+                    torrent_site = link.a['href'].split('/')
+                    magnet = get_magnetic_link(link.a['href'])
+                    if magnet:
+                        maglink[torrent_site[2]] = magnet
             torrent.trackers = download_link_list
-            torrent.magnetic_link = magnetic_link
+            torrent.magnetic_link = maglink
         except Exception, excpt:
             torrent.trackers = download_link_list
             torrent.magnetic_link = magnetic_link
@@ -68,7 +69,6 @@ def get_magnetic_link(link):
         for magnetic_link in magnetic_links:
             if str(magnetic_link['href']).startswith('magnet'):
                 maglink = magnetic_link['href']
-                print maglink
                 return maglink
     except Exception, excpt:
         return maglink
@@ -82,7 +82,7 @@ def convert_to_json(object_list):
 
 
 
-val = search('The Flash')
+val = search('fifa 14')
 search_trackers(val)
 print convert_to_json(val)
 
