@@ -98,7 +98,6 @@ def search_torrent(params):
     search_trackers(val)
     return convert_to_json(val)
 
-print search_torrent('fifa 14')
 
 
 
