@@ -20,6 +20,7 @@ def search():
         return_data['data'] = data
         return jsonify(return_data)
     except Exception, excpt:
+        print excpt
         return jsonify({'status': False})
 
 if __name__ == '__main__':

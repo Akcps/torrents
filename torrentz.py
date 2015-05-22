@@ -47,6 +47,7 @@ def search(search_string):
             torrentz_list.append(torrentz)
         return torrentz_list
     except Exception, excpt:
+        print excpt
         return torrentz_list
 
 
@@ -68,6 +69,7 @@ def search_trackers(torrent_list):
             torrent.trackers = download_link_list
             torrent.magnetic_link = maglink
         except Exception, excpt:
+            print excpt
             torrent.trackers = download_link_list
             torrent.magnetic_link = magnetic_link
 
@@ -83,6 +85,7 @@ def get_magnetic_link(link):
                 maglink = magnetic_link['href']
                 return maglink
     except Exception, excpt:
+        print excpt
         return maglink
 
 
