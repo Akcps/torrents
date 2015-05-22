@@ -21,13 +21,13 @@ class Torrent:
 def search(search_string):
     try:
         payload = {'q': search_string}
-        res = requests.get('https://torrentz.com/search', params=payload)
+        res = requests.get('http://torrentz.com/search', params=payload)
         soup = BeautifulSoup(res.content)
         links = soup.find_all('dl')
         torrentz_list = []
         for torrent in links[:3]:
             torrentz = Torrent()
-            torrent_link = 'https://torrentz.in'
+            torrent_link = 'http://torrentz.in'
             torrent_link += torrent.a['href']
             torrentz.link = torrent_link
             title_description = torrent.a.contents[-1]
