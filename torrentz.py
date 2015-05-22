@@ -21,13 +21,13 @@ class Torrent:
 def search(search_string):
     try:
         payload = {'q': search_string}
-        res = requests.get('http://torrentz.com/search', params=payload)
+        res = requests.get('https://torrentz.com/search', params=payload)
         soup = BeautifulSoup(res.content)
         links = soup.find_all('dl')
         torrentz_list = []
         for torrent in links[:3]:
             torrentz = Torrent()
-            torrent_link = 'http://torrentz.in'
+            torrent_link = 'https://torrentz.in'
             torrent_link += torrent.a['href']
             torrentz.link = torrent_link
             title_description = torrent.a.contents[-1]
@@ -47,7 +47,6 @@ def search(search_string):
             torrentz_list.append(torrentz)
         return torrentz_list
     except Exception, excpt:
-        print excpt
         return torrentz_list
 
 
@@ -69,7 +68,6 @@ def search_trackers(torrent_list):
             torrent.trackers = download_link_list
             torrent.magnetic_link = maglink
         except Exception, excpt:
-            print excpt
             torrent.trackers = download_link_list
             torrent.magnetic_link = magnetic_link
 
@@ -85,7 +83,6 @@ def get_magnetic_link(link):
                 maglink = magnetic_link['href']
                 return maglink
     except Exception, excpt:
-        print excpt
         return maglink
 
 
